@@ -7,5 +7,5 @@ Open your calender, select all meetings you want to cancel and run the macro. Th
 ## How to install 
 - Open Outlook
 - Press Alt+F11 to open VBA editor
-- Paste [code](https://github.com/Essenpreis/OutOfOfficeMeetingDecliner/blob/master/cancelmeetings.vba) into a new project
+- Paste the [code](https://github.com/Essenpreis/OutOfOfficeMeetingDecliner/blob/master/cancelmeetings.vba) into a new project
 - Optional: Link the sub CancelMeetings() to a button in the menu/ribbon.
