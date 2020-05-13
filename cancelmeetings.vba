@@ -4,7 +4,7 @@ On Error GoTo eh
    Dim msg As String
     msg = InputBox("What is the reason to cancel the meeting(s)? Leave empty to send default ooo message.")
     If msg = "" Then
-        msg = "Cancellation Reason: I am out of office. If we should repeat the meeting, respectively my attendance is required, please propose a new date."
+        msg = "Cancellation Reason: I am out of office / unavailable. If we should repeat the meeting, respectively my attendance is required, please propose a new date."
     End If
     
     Dim myaccount As String
@@ -76,21 +76,24 @@ On Error GoTo eh
             
         ElseIf app.Class = olAppointment And (app.MeetingStatus = olMeetingReceived) Then
         ' And Not (app.ResponseStatus = olResponseTentative Or app.ResponseStatus = olResponseNotResponded) Then
-                
+           
             'copied from https://www.slipstick.com/developer/accept-or-decline-a-meeting-request-using-vba/
             Dim cAppt As AppointmentItem
             Dim oResponse
             
             Set cAppt = app 'GetCurrentItem.GetAssociatedAppointment(True)
-            Set oResponse = cAppt.Respond(olMeetingDeclined, True)
-            
-            If cAppt.ResponseRequested = True Then
-                oResponse.Send 'TODO: for some invitations vba exits when sending...
+            Set oResponse = cAppt.Respond(olMeetingDeclined, True, False)
+            If Not oResponse Is Nothing Then
+                oResponse.Body = msg
+                If cAppt.ResponseRequested = True Then
+                    oResponse.Send 'TODO: for some invitations vba exits when sending...
+                End If
+                Set cAppt = Nothing
+                Set oResponse = Nothing
+            Else
+                MsgBox ("cAppt.Respond was initial. However Appointment was deleted. Need manual intervention. App: " & app.Subject)
+                Debug.Print "cAppt.Respond was initial for " & app.Subject
             End If
-            
-            Set cAppt = Nothing
-            Set oResponse = Nothing
-        
         Else
             MsgBox ("Could not identify action for meeting " & app.Subject)
         End If
@@ -98,7 +101,6 @@ On Error GoTo eh
             
       Else
             MsgBox ("Could not identify action for meeting " & app.Subject)
-                 
       End If 'big if
     
         
